@@ -1,0 +1,641 @@
+/* --- 1. Definição das Variáveis CSS --- */
+:root {
+  /* Cores */
+  --cor-principal: #FFC300; /* Amarelo */
+  --cor-principal-hover: #E6B000;
+  --cor-secundaria: #004A99; /* Azul */
+  --cor-secundaria-hover: #003B7A; /* Azul Escuro */
+  --cor-secundaria-clara: #E6F0FF; /* Azul bem clarinho para faixa */
+  --cor-fundo: #FFF9E6; /* Amarelo claro */
+  --cor-branco: #ffffff;
+  --cor-texto-padrao: #333;
+  --cor-texto-claro: #555;
+  --cor-titulo: #2c3e50;
+  --cor-cinza-claro: #f4f4f9;
+  --cor-cinza-medio: #f8f9fa;
+  --cor-cinza-borda: #ddd;
+  --cor-cinza-borda-card: #e0e0e0;
+  --cor-preto-contraste: #111;
+  --cor-status-aberto: #008000; /* Verde */
+  --cor-status-encerrado: #777; /* Cinza */
+
+  /* Bordas e Sombras */
+  --raio-borda-container: 8px;
+  --raio-borda-botao: 5px;
+  --raio-borda-filtro: 20px;
+  --sombra-container: 0 4px 15px rgba(0,0,0,0.1);
+  --sombra-container-hover: 0 8px 25px rgba(0,0,0,0.15);
+  --sombra-foto: 0 2px 5px rgba(0,0,0,0.2);
+
+  /* Transições */
+  --transicao-padrao: 0.3s ease;
+}
+
+/* --- Reset Básico e Fontes --- */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto-padrao);
+    line-height: 1.6;
+
+    min-height: 100vh; /* Garante que o corpo tenha no mínimo a altura total da tela */
+    display: flex;     /* Ativa o modo flexível */
+    flex-direction: column;
+
+    overflow-x: hidden;
+    width: 100vw;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box; /* <--- GARANTE QUE PADDING E BORDAS ESTEJAM INCLUSOS NA LARGURA */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* --- Cabeçalho --- */
+header {
+    background-color: var(--cor-status-aberto);
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--cor-cinza-borda);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-logo {
+    height: 125px; /* Ajuste conforme necessidade */
+    width: auto;
+    display: block;
+    margin: 0;
+    opacity: 0.9;
+    border-radius: 4px;
+}
+
+header h1 { margin: 0; }
+
+/* Menu Principal (Desktop) */
+.main-nav {
+    margin-right: 25%; /* Afasta da borda direita */
+}
+.main-nav ul {
+    margin: 0; 
+    padding: 0; 
+    list-style: none; 
+    display: flex;
+}
+.main-nav li { 
+    margin-left: 25px; 
+}
+.main-nav a {
+    text-decoration: none; 
+    color: var(--cor-branco); 
+    font-weight: 500;
+    transition: color var(--transicao-padrao);
+}
+.main-nav a:hover { 
+    color: var(--cor-principal); 
+}
+
+/* --- Menu Hamburger (Mobile) --- */
+.hamburger-button {
+    display: none; 
+    background: none; 
+    border: none; 
+    font-size: 1.8rem;
+    color: var(--cor-secundaria); 
+    cursor: pointer;
+}
+.close-button {
+    display: none; 
+    position: absolute; 
+    top: 20px; 
+    right: 20px; 
+    background: none;
+    border: none; 
+    font-size: 2rem; 
+    color: var(--cor-branco); 
+    cursor: pointer;
+}
+.mobile-nav {
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    right: 0; 
+    width: 80%; 
+    max-width: 300px;
+    height: 100%; 
+    background-color: var(--cor-secundaria-hover); 
+    box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+    padding: 60px 20px 20px 20px; 
+    box-sizing: border-box; 
+    transform: translateX(100%);
+    transition: transform var(--transicao-padrao); 
+    z-index: 1000;
+}
+.mobile-nav ul { 
+    list-style: none; 
+    padding: 0; 
+    margin: 0; 
+    display: flex; 
+    flex-direction: column; 
+}
+.mobile-nav li { 
+    margin-bottom: 20px; 
+}
+.mobile-nav a { 
+    color: var(--cor-branco); 
+    text-decoration: none; 
+    font-size: 1.2rem; 
+    font-weight: bold; 
+}
+.mobile-nav-open { 
+    transform: translateX(0); 
+}
+
+@media (max-width: 768px) {
+    .main-nav { 
+        display: none; 
+    }
+    .hamburger-button { 
+        display: block; 
+    }
+    .mobile-nav { 
+        display: block; 
+    }
+    .mobile-nav-open .close-button { 
+        display: block; 
+    }
+}
+
+/* --- Conteúdo Principal --- */
+main { 
+    padding: 0 0 40px 0; 
+    flex: 1;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--cor-titulo);
+    font-size: 2.2rem;
+}
+
+/* --- Classe Base para Contêineres de Seção --- */
+.content-box {
+    background: var(--cor-branco);
+    padding: 30px;
+    border-radius: var(--raio-borda-container);
+    box-shadow: var(--sombra-container);
+    margin-bottom: 50px; /* Margem padrão entre caixas no fundo claro */
+}
+
+/* Ajustes específicos para padding maior */
+.agentes-culturais-container,
+.sobre-container,
+.oportunidades-container,
+.agentes-preview-container,
+.oportunidades-preview-container {
+    padding: 40px;
+}
+
+/* --- Faixas de Fundo Coloridas --- */
+.color-band {
+    padding: 50px 0;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 50px;
+}
+.bg-yellow-band { 
+    background-color: var(--cor-principal); 
+}
+.bg-light-blue-band { 
+    background-color: var(--cor-secundaria-clara); 
+}
+
+/* Ajustes de Espaçamento DENTRO das faixas coloridas */
+.color-band .container > .content-box:last-child,
+.color-band .container > a:last-child .content-box {
+    margin-bottom: 0; /* Remove margem do último item */
+}
+.color-band .container > .content-box:not(:last-child),
+.color-band .container > a:not(:last-child) .content-box {
+    margin-bottom: 40px; /* Adiciona margem entre itens */
+}
+/* Garante margem para .content-box fora das faixas */
+main > .container > .content-box { 
+    margin-bottom: 50px; 
+}
+
+
+/* --- Mapa --- */
+#map {
+    height: 500px; 
+    width: 100%; 
+    border-radius: var(--raio-borda-container);
+    border: 1px solid var(--cor-cinza-borda);
+}
+
+/* --- Botões --- */
+.btn {
+    display: inline-block; 
+    padding: 12px 25px; 
+    border: 1px solid transparent;
+    border-radius: var(--raio-borda-botao); 
+    text-decoration: none; font-weight: bold;
+    text-align: center; 
+    cursor: pointer;
+    transition: background-color var(--transicao-padrao), color var(--transicao-padrao), border-color var(--transicao-padrao), transform var(--transicao-padrao);
+}
+.btn:hover { 
+    transform: translateY(-2px); 
+}
+
+.btn--primary { 
+    background-color: var(--cor-principal); 
+    color: var(--cor-preto-contraste); 
+    border-color: var(--cor-principal); 
+}
+.btn--primary:hover { 
+    background-color: var(--cor-principal-hover); 
+    border-color: var(--cor-principal-hover);
+}
+.btn--secondary { 
+    background-color: var(--cor-secundaria); 
+    color: var(--cor-branco); 
+    border-color: var(--cor-secundaria); 
+}
+.btn--secondary:hover { 
+    background-color: var(--cor-secundaria-hover); 
+    border-color: var(--cor-secundaria-hover);
+}
+.btn--filter {
+    background: none; 
+    border: 1px solid var(--cor-cinza-borda); 
+    color: var(--cor-texto-claro);
+    padding: 10px 20px; 
+    border-radius: var(--raio-borda-filtro);
+}
+.btn--filter:hover { 
+    background-color: var(--cor-principal); 
+    color: var(--cor-preto-contraste); 
+    border-color: var(--cor-principal); 
+    transform: none; 
+}
+.btn--filter.active { 
+    background-color: var(--cor-secundaria); 
+    color: var(--cor-branco); 
+    border-color: var(--cor-secundaria); 
+}
+
+/* --- Filtros --- */
+.filters { 
+    text-align: center; 
+    margin-bottom: 20px; 
+}
+.filters .btn--filter { 
+    margin: 0 5px; 
+}
+
+/* --- Destaques da Semana (Gráficos) --- */
+.card-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+    gap: 30px; 
+}
+.card-grid iframe { 
+    width: 100%; 
+    max-width: 600px; 
+    height: 400px; 
+    border-radius: var(--raio-borda-container); 
+    margin: 0 auto; 
+}
+
+/* --- Agentes Culturais (Página e Preview) --- */
+.agentes-grid { 
+    display: grid; 
+    grid-template-columns: 1fr; 
+    gap: 20px; 
+}
+.agente-card {
+    display: flex; 
+    align-items: center; 
+    padding: 20px; 
+    border: 1px solid var(--cor-cinza-borda-card);
+    border-radius: var(--raio-borda-container); 
+    background-color: var(--cor-cinza-medio);
+    transition: transform var(--transicao-padrao), box-shadow var(--transicao-padrao);
+}
+.agente-card:hover { 
+    transform: translateY(-5px); 
+    box-shadow: var(--sombra-container-hover); 
+}
+.agente-foto img {
+    width: 100px; 
+    height: 100px; 
+    border-radius: 50%; 
+    object-fit: cover; 
+    margin-right: 25px;
+    border: 4px solid var(--cor-principal); 
+    flex-shrink: 0;
+}
+.agente-info h3 { 
+    margin: 0 0 8px 0; 
+    color: #34495e; 
+    font-size: 1.5rem; 
+}
+.agente-info p { 
+    margin: 0; 
+    color: var(--cor-texto-claro); 
+    font-size: 0.95rem; 
+    line-height: 1.5; 
+}
+
+/* Preview Agentes */
+.agentes-preview-link { 
+    text-decoration: none; 
+    color: inherit; 
+    display: block; 
+}
+.agentes-preview-container { 
+    text-align: center; 
+    transition: transform var(--transicao-padrao), box-shadow var(--transicao-padrao); 
+}
+.agentes-preview-link:hover .agentes-preview-container { 
+    transform: translateY(-5px); 
+    box-shadow: var(--sombra-container-hover); 
+}
+.agentes-fotos-preview { 
+    display: flex; 
+    justify-content: center; 
+    margin: 25px 0; 
+}
+.agentes-fotos-preview img { 
+    width: 80px; 
+    height: 80px; 
+    border-radius: 50%; 
+    object-fit: cover;
+    border: 4px solid var(--cor-branco); 
+    box-shadow: var(--sombra-foto); 
+    transition: transform var(--transicao-padrao); 
+}
+.agentes-fotos-preview img:not(:first-child) {
+    margin-left: -20px; 
+    }
+.agentes-preview-link:hover .agentes-fotos-preview img { 
+    transform: translateY(-10px); 
+}
+.agentes-preview-container p { 
+    max-width: 600px; 
+    margin: 0 auto 20px auto; 
+}
+/* O span .preview-cta-button foi removido do CSS, usar .btn .btn--secondary no link <a> */
+
+/* --- Seção de Cadastro (Botão p/ Forms) --- */
+.cadastro-agentes {
+    text-align: center; /* Mantém conteúdo centralizado, agora que é .content-box */
+    background-color: var(--cor-secundaria);
+    color: var(--cor-branco);
+}
+/* Os estilos específicos de fundo/cor foram removidos pois agora usa .content-box */
+.cadastro-agentes.content-box h2 {
+    color: var(--cor-branco);
+}
+/* --- Página Sobre --- */
+.sobre-container { 
+    text-align: left; 
+}
+.sobre-container h3 { 
+    color: var(--cor-secundaria); 
+    margin-top: 30px; 
+    border-bottom: 2px solid var(--cor-principal); 
+    padding-bottom: 5px; 
+    display: inline-block; 
+}
+.sobre-container ul { 
+    list-style: none; 
+    padding-left: 0; 
+}
+.sobre-container li { 
+    padding-left: 25px; 
+    position: relative; 
+    margin-bottom: 10px; 
+}
+.sobre-container li::before { 
+    content: '✔'; 
+    color: var(--cor-secundaria); 
+    position: absolute; left: 0; 
+    font-weight: bold; 
+}
+
+/* --- Página Oportunidades (e Preview) --- */
+.oportunidades-container p { 
+    text-align: center; 
+    max-width: 800px; 
+    margin: 0 auto 40px auto; 
+    font-size: 1.1rem; 
+}
+.editais-list { 
+    display: grid; 
+    grid-template-columns: 1fr; 
+    gap: 30px; 
+}
+.edital-card { 
+    border: 1px solid var(--cor-cinza-borda); 
+    border-radius: var(--raio-borda-container); 
+    padding: 25px; 
+    position: relative; 
+    background-color: var(--cor-cinza-medio); 
+    overflow: hidden; 
+}
+.edital-card h3 { 
+    color: var(--cor-secundaria); 
+    margin-top: 10px; 
+    margin-bottom: 10px; 
+}
+.edital-card p { 
+    text-align: left;
+    margin-bottom: 25px; 
+    font-size: 1rem; 
+}
+/* O link .edital-link usará .btn .btn--primary no HTML */
+
+/* Preview Oportunidades */
+.oportunidades-preview-link { 
+    text-decoration: none; 
+    color: inherit; 
+    display: block; 
+}
+.oportunidades-preview-container { 
+    text-align: center; 
+    transition: transform var(--transicao-padrao), box-shadow var(--transicao-padrao); 
+}
+.oportunidades-preview-link:hover .oportunidades-preview-container { 
+    transform: translateY(-5px); 
+    box-shadow: var(--sombra-container-hover); 
+}
+.oportunidades-preview-container h2 { 
+    margin-bottom: 25px; 
+}
+.editais-preview-list { 
+    margin-bottom: 30px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    gap: 15px; 
+}
+.edital-preview-item { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    width: 100%; 
+    max-width: 500px; 
+    padding: 10px; 
+    border: 1px dashed var(--cor-cinza-borda); 
+    border-radius: var(--raio-borda-botao); 
+}
+.edital-preview-item p { 
+    margin: 0; 
+    font-weight: 500; 
+    color: var(--cor-texto-padrao); 
+    text-align: left; 
+}
+.edital-preview-item .status-badge { 
+    margin-right: 15px; flex-shrink: 0; 
+}
+
+/* Selos de Status */
+.status-badge { 
+    padding: 5px 10px; 
+    color: var(--cor-branco); 
+    font-size: 0.8rem; 
+    font-weight: bold; 
+    text-transform: uppercase; 
+    border-radius: var(--raio-borda-botao); 
+}
+.edital-card .status-badge { 
+    position: absolute; 
+    top: 0; 
+    right: 0; 
+    border-top-right-radius: 7px; 
+    border-bottom-left-radius: 10px; 
+}
+.status-aberto { 
+    background-color: var(--cor-status-aberto); 
+}
+.status-encerrado { 
+    background-color: var(--cor-status-encerrado); 
+}
+
+/* --- Paginação --- */
+.pagination-container { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    margin-top: 40px; 
+    user-select: none; 
+}
+/* Os botões de paginação usarão .btn no HTML */
+.pagination-button.active { 
+    background-color: var(--cor-principal); 
+    color: var(--cor-preto-contraste); 
+    border-color: var(--cor-principal); 
+}
+.pagination-button.disabled { 
+    cursor: not-allowed; opacity: 0.5;
+}
+
+/* --- Rodapé --- */
+footer { 
+    background-color: var(--cor-secundaria); 
+    color: var(--cor-branco); 
+    padding: 30px 0; 
+    margin-top: 40px; 
+}
+.footer-layout {
+    display: flex;
+    justify-content: space-between; /* Empurra um para a esquerda e outro para a direita */
+    align-items: center; /* Alinha verticalmente no centro */
+    text-align: left; /* Remove o alinhamento centralizado padrão */
+}
+.footer-left .footer-prefeitura-logo {
+    height: 60px; /* Ajuste o tamanho conforme preferir */
+    width: auto;
+    display: block;
+    margin: 0; /* Remove a margem automática que centralizava antes */
+    opacity: 0.9;
+    border-radius: 4px; /* Opcional: deixa os cantos do logo levemente arredondados */
+}
+.footer-right {
+    text-align: right; /* Alinha o texto e ícones à direita */
+}
+.footer-right p {
+    margin: 10px 0 0 0; /* Espaço entre ícones e texto */
+    font-size: 0.9rem;
+}
+.social-icons { 
+    margin-bottom: 0; 
+}
+.social-icons a { 
+    color: var(--cor-branco); 
+    margin-left: 20px; 
+    text-decoration: none; 
+}
+.social-icons a i { 
+    font-size: 2rem; 
+    transition: transform var(--transicao-padrao); 
+}
+.social-icons a:hover i { 
+    transform: scale(1.2); 
+}
+.footer-prefeitura-logo { 
+    height: 50px; 
+    width: auto; 
+    margin: 20px auto 10px auto; 
+    display: block; 
+    opacity: 0.9; 
+}
+
+/* --- Ajustes Responsivos --- */
+@media (max-width: 600px) {
+    .agente-card { 
+        flex-direction: column; 
+        align-items: center; 
+        text-align: center; 
+    }
+    .agente-foto img { 
+        margin-right: 0; 
+        margin-bottom: 15px; 
+    }
+}
+@media (max-width: 768px) {
+    .footer-layout {
+        flex-direction: column; /* Empilha verticalmente */
+        text-align: center;
+        gap: 20px; /* Espaço entre o logo e o texto */
+    }
+
+    .footer-right {
+        text-align: center;
+    }
+
+    .footer-left .footer-prefeitura-logo {
+        margin: 0 auto; /* Centraliza o logo no celular */
+    }
+    
+    .social-icons a {
+        margin: 0 10px; /* Ajusta margem dos ícones no celular */
+    }
+}

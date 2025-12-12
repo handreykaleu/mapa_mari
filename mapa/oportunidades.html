@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oportunidades - Mapa Cultural de Mari</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <div class="container header-container"> <h1>
+            <a href="index.html">
+                <img src="imagens/nova_logo_2.jpeg" alt="Logo da SECTUR" class="header-logo">
+            </a>
+        </h1>
+
+        <nav class="main-nav">
+            <ul>
+                <li><a href="index.html">Início</a></li>
+                <li><a href="agentes.html">Agentes Culturais</a></li>
+                <li><a href="sobre.html">Sobre</a></li>
+                <li><a href="oportunidades.html">Oportunidades</a></li>
+                <li><a href="#contato">Contato</a></li>
+            </ul>
+        </nav>
+
+        <button class="hamburger-button" aria-label="Abrir menu">
+            <i class="fas fa-bars"></i> </button>
+    </div>
+
+    <nav class="mobile-nav">
+        <ul>
+            <li><a href="index.html">Início</a></li>
+            <li><a href="agentes.html">Agentes Culturais</a></li>
+            <li><a href="sobre.html">Sobre</a></li>
+            <li><a href="oportunidades.html">Oportunidades</a></li>
+            <li><a href="#contato">Contato</a></li>
+        </ul>
+        <button class="close-button" aria-label="Fechar menu">
+             <i class="fas fa-times"></i> </button>
+    </nav>
+</header>
+
+<main>
+    <div class="container">
+        <section class="oportunidades-container">
+            <h2>Oportunidades e Editais</h2>
+            <p>Fique por dentro das chamadas públicas, prêmios e editais de fomento à cultura abertos para o município de Mari e região.</p>
+            <!--
+            <div class="editais-list">
+                <div class="edital-card">
+                    <span class="status-badge status-aberto">Inscrições Abertas</span>
+                    <h3>Edital de Fomento à Cultura Popular 2025</h3>
+                    <p>Chamada pública para apoio a grupos, mestres e mestras de tradição popular, quadrilhas juninas e manifestações culturais de matriz africana. Inscrições de 01/10 a 30/11.</p>
+                    <a href="#" class="edital-link" target="_blank">Ler o Edital e Inscrever-se</a>
+                </div>
+
+                <div class="edital-card">
+                    <span class="status-badge status-encerrado">Encerrado</span>
+                    <h3>Prêmio Mari de Artesanato 2024</h3>
+                    <p>Concurso voltado para artesãos locais com o objetivo de premiar as peças mais criativas e que representam a identidade cultural do município. Inscrições encerradas em 15/08.</p>
+                    <a href="#" class="edital-link" target="_blank">Ver Resultados</a>
+                </div>
+            </div>
+            EXEMPLO DE EDITAIS
+            -->
+            
+        </section>
+    </div>
+</main>
+
+<footer id="contato">
+    <div class="container footer-layout"> <div class="footer-left">
+            <img src="imagens/mari_vibrante.jpeg" alt="Logo da Prefeitura de Mari" class="footer-prefeitura-logo">
+        </div>
+
+        <div class="footer-right">
+            <div class="social-icons">
+                <a href="mailto:secretariadeculturamaripb@gmail.com" aria-label="Link para enviar um E-mail">
+                    <i class="fa-solid fa-envelope"></i>
+                </a>
+                <a href="https://www.instagram.com/secturmari?igsh=MWljMjk4MWV2bWU2cg==" target="_blank" aria-label="Link para o Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                </a>
+            </div>
+            <p>&copy; 2025 Mapa Cultural de Mari. Todos os direitos reservados.</p>
+        </div>
+
+    </div>
+</footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
