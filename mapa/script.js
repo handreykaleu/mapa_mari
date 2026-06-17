@@ -1,32 +1,192 @@
-// Aguarda o conteúdo da página ser carregado para executar o script
-document.addEventListener('DOMContentLoaded', function() {
-    const agentesCulturais = [
-        /*{
-            foto: 'https://i.pravatar.cc/150?img=68',
-            nome: 'Lourival Oliveira',
-            biografia: 'Paraibano de Patos, nascido em junho de 1918, Lourival Oliveira é autor de alguns dos mais memoráveis frevos-de-rua da história deste gênero musical.'
-        },
-        EXEMPLO DE AGENTE CULTURAL*/
-        {
-            foto: 'imagens/dudu.jpg',
-            nome: 'José Eduardo (Dudu)',
-            biografia: 'José Eduardo(Dudu) é natural da cidade de Marí-PB onde iniciou seus estudos de música em 1999 na Banda de música da cidade, é Bacharel em Trombone pela UPFB, licenciado em música pelo instituto Zayn, pós graduando em psicomotricidade e educação especial, também pelo instituto Zayn. Teve como orientador o Prof°  Me Sandoval Moreno,  participou de vários festivais locais da ATPB. ABT, atuou como trombonista em vários grupos musicais locais e Bandas, tais como  Experimental Jazz Band, Quarteto Trombombando, Orquestra de Metais e Percussão do Estado da Paraíba, Banda Marcial SEDEC, Banda de Música Santa Cecília, Sapé-PB, Banda Sinfônica José Siqueira da UFPB, Banda Marcial SEDEC Sênior, Quinteto São Francisco JP, Paraibones, Foi professor(Monitor) Da Banda Sinfônica da SEDEC, entre outros, chefe de naipe da Banda Marcial Paraíba. Atualmente é Trombonista da Orquestra SEDEC , também é  professor de música da rede municipal estadual de ensino e Gerente de Politicas publicas e patrimônio histórico da cidade de Mari-PB.'
-        },
-    ];
+/**
+ * Mapa Cultural de Mari - Script Principal
+ * Lógica modular, assíncrona, integrada ao Google Planilhas com fallback local.
+ */
 
-    // 2. FUNÇÃO PARA CRIAR OS CARDS NA TELA
-    function renderizarAgentes() {
-        const gridContainer = document.querySelector('.agentes-grid');
-        if (!gridContainer) return; 
+// --- CONFIGURAÇÃO DO GOOGLE PLANILHAS ---
+// Cole aqui as URLs de publicação em formato CSV para cada aba da sua Planilha Google.
+// Se deixadas em branco (''), o site carregará automaticamente os arquivos JSON locais da pasta 'data/'.
+const URL_PLANILHA_AGENTES = '';
+const URL_PLANILHA_PONTOS = '';
+const URL_PLANILHA_OPORTUNIDADES = '';
 
-        // Limpa o container antes de adicionar novos cards
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicialização dos módulos do site
+    initNavbar();
+    initMap();
+    initAgentes();
+    initAgentesPreview();
+    initOportunidades();
+    initOportunidadesPreview();
+});
+
+/**
+ * FUNÇÃO HÍBRIDA DE CARREGAMENTO DE DADOS
+ * Tenta buscar da Planilha Google (via PapaParse). Se der erro ou se a URL
+ * estiver vazia, faz o fallback para o arquivo JSON local do projeto.
+ */
+async function buscarDados(urlPlanilha, urlLocalFallback) {
+    if (urlPlanilha && urlPlanilha.trim() !== '') {
+        try {
+            // Garante que o PapaParse está disponível
+            if (typeof Papa !== 'undefined') {
+                return await new Promise((resolve, reject) => {
+                    Papa.parse(urlPlanilha, {
+                        download: true,
+                        header: true,
+                        skipEmptyLines: true,
+                        complete: (results) => {
+                            if (results.errors && results.errors.length > 0) {
+                                console.warn('Erros menores ao analisar CSV:', results.errors);
+                            }
+                            resolve(results.data);
+                        },
+                        error: (error) => {
+                            reject(error);
+                        }
+                    });
+                });
+            } else {
+                console.warn('PapaParse não carregado. Usando fallback local.');
+            }
+        } catch (error) {
+            console.warn(`Erro ao carregar dados da planilha (${urlPlanilha}). Carregando backup local.`, error);
+        }
+    }
+
+    // Carregamento local JSON tradicional (fallback)
+    const response = await fetch(urlLocalFallback);
+    if (!response.ok) {
+        throw new Error(`Não foi possível ler os dados locais em: ${urlLocalFallback}`);
+    }
+    return await response.json();
+}
+
+/**
+ * 1. CONTROLE DO MENU HAMBÚRGUER (MOBILE)
+ * Gerencia a abertura e fechamento da gaveta de navegação mobile.
+ */
+function initNavbar() {
+    const hamburgerButton = document.querySelector('.hamburger-button');
+    const mobileNav = document.querySelector('.mobile-nav');
+    const closeButton = document.querySelector('.close-button');
+
+    if (!hamburgerButton || !mobileNav || !closeButton) return;
+
+    const abrirMenu = () => mobileNav.classList.add('mobile-nav-open');
+    const fecharMenu = () => mobileNav.classList.remove('mobile-nav-open');
+
+    hamburgerButton.addEventListener('click', abrirMenu);
+    closeButton.addEventListener('click', fecharMenu);
+
+    // Fecha a navegação ao clicar em qualquer link (útil para links âncoras na mesma página)
+    mobileNav.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', fecharMenu);
+    });
+}
+
+/**
+ * 2. MAPA INTERATIVO (LEAFLET)
+ * Inicializa o mapa com Leaflet e carrega pontos da planilha (ou pontos.json local).
+ */
+function initMap() {
+    const mapContainer = document.getElementById('map');
+    if (!mapContainer) return;
+
+    // Garante que o Leaflet (L) está carregado no escopo global
+    if (typeof L === 'undefined') {
+        console.warn('Leaflet não foi carregado nesta página.');
+        return;
+    }
+
+    // Configuração inicial do mapa centrado em Mari-PB
+    const map = L.map('map').setView([-7.059800, -35.317108], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    const markerLayer = L.layerGroup().addTo(map);
+    let allSpots = [];
+
+    // Função para renderizar os marcadores baseados em filtro
+    function renderMarkers(categoryFilter) {
+        markerLayer.clearLayers();
+
+        const filtered = (categoryFilter === 'todos')
+            ? allSpots
+            : allSpots.filter(spot => spot.category === categoryFilter);
+
+        filtered.forEach(spot => {
+            const lat = parseFloat(spot.lat);
+            const lng = parseFloat(spot.lng);
+
+            // Validação de coordenadas para evitar erros na renderização do mapa
+            if (isNaN(lat) || isNaN(lng)) {
+                console.warn(`Ponto com coordenadas inválidas ignorado: ${spot.name}`);
+                return;
+            }
+
+            const marker = L.marker([lat, lng]);
+            marker.bindPopup(`<b>${spot.name}</b><br>${spot.description}`);
+            markerLayer.addLayer(marker);
+        });
+    }
+
+    // Carrega os dados usando a função híbrida
+    buscarDados(URL_PLANILHA_PONTOS, 'data/pontos.json')
+        .then(data => {
+            allSpots = data;
+            renderMarkers('todos');
+        })
+        .catch(err => {
+            console.error('Erro ao inicializar pontos no mapa:', err);
+            mapContainer.innerHTML = '<div style="padding: 20px; text-align:center;">Não foi possível carregar os pontos do mapa no momento.</div>';
+        });
+
+    // Filtros do Mapa
+    const filterButtons = document.querySelectorAll('.btn--filter');
+    filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            renderMarkers(button.dataset.category);
+        });
+    });
+}
+
+/**
+ * 3. LISTAGEM COMPLETA DE AGENTES CULTURAIS COM PAGINAÇÃO
+ * Carrega agentes da planilha (ou agentes.json local) e exibe-os paginados.
+ */
+function initAgentes() {
+    const gridContainer = document.querySelector('.agentes-grid');
+    const paginationContainer = document.querySelector('.pagination-container');
+
+    if (!gridContainer || !paginationContainer) return;
+
+    let agentes = [];
+    let paginaAtual = 1;
+    const itensPorPagina = 6; // Ajustável
+
+    function displayPage(pagina) {
+        paginaAtual = pagina;
         gridContainer.innerHTML = '';
 
-        agentesCulturais.forEach(agente => {
+        const inicio = (pagina - 1) * itensPorPagina;
+        const fim = inicio + itensPorPagina;
+        const agentesPaginados = agentes.slice(inicio, fim);
+
+        if (agentesPaginados.length === 0) {
+            gridContainer.innerHTML = '<p class="text-center w-100">Nenhum agente cultural cadastrado.</p>';
+            return;
+        }
+
+        agentesPaginados.forEach(agente => {
             const cardHTML = `
                 <div class="agente-card">
                     <div class="agente-foto">
-                        <img src="${agente.foto}" alt="Foto de ${agente.nome}">
+                        <img src="${agente.foto}" alt="Foto de ${agente.nome}" loading="lazy">
                     </div>
                     <div class="agente-info">
                         <h3>${agente.nome}</h3>
@@ -34,186 +194,155 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             `;
-            gridContainer.innerHTML += cardHTML;
+            gridContainer.insertAdjacentHTML('beforeend', cardHTML);
         });
+
+        setupPagination();
     }
 
-    // 3. CHAMA A FUNÇÃO PARA RENDERIZAR QUANDO A PÁGINA CARREGAR
-let paginaAtual = 1;
-const itensPorPagina = 10; // Defina quantos agentes aparecerão por página
+    function setupPagination() {
+        paginationContainer.innerHTML = '';
+        const totalPaginas = Math.ceil(agentes.length / itensPorPagina);
+        if (totalPaginas <= 1) return;
 
-// 2. A nova função para renderizar, agora chamada `displayPage`
-function displayPage(pagina) {
-    const gridContainer = document.querySelector('.agentes-grid');
-    const paginationContainer = document.querySelector('.pagination-container');
-    
-    // Se não estiver na página de agentes, não faz nada.
-    if (!gridContainer || !paginationContainer) return;
-
-    paginaAtual = pagina;
-    gridContainer.innerHTML = ''; // Limpa a grade
-
-    // Calcula os itens da página atual
-    const inicio = (pagina - 1) * itensPorPagina;
-    const fim = inicio + itensPorPagina;
-    const itensPaginados = agentesCulturais.slice(inicio, fim);
-
-    // Renderiza os cards dos agentes da página atual
-    itensPaginados.forEach(agente => {
-        const cardHTML = `
-            <div class="agente-card">
-                <div class="agente-foto">
-                    <img src="${agente.foto}" alt="Foto de ${agente.nome}">
-                </div>
-                <div class="agente-info">
-                    <h3>${agente.nome}</h3>
-                    <p>${agente.biografia}</p>
-                </div>
-            </div>
-        `;
-        gridContainer.innerHTML += cardHTML;
-    });
-
-    // Renderiza os botões da paginação
-    setupPagination();
-}
-
-// 3. Função para criar e gerenciar os botões
-function setupPagination() {
-    const paginationContainer = document.querySelector('.pagination-container');
-    if (!paginationContainer) return;
-
-    paginationContainer.innerHTML = ''; // Limpa os botões antigos
-    const totalPaginas = Math.ceil(agentesCulturais.length / itensPorPagina);
-
-    // Botão "Anterior"
-    const btnAnterior = document.createElement('button');
-    btnAnterior.innerText = 'Anterior';
-    btnAnterior.classList.add('pagination-button');
-    if (paginaAtual === 1) btnAnterior.classList.add('disabled');
-    btnAnterior.addEventListener('click', () => {
-        if (paginaAtual > 1) {
-            displayPage(paginaAtual - 1);
-        }
-    });
-    paginationContainer.appendChild(btnAnterior);
-
-    // Botões de número de página
-    for (let i = 1; i <= totalPaginas; i++) {
-        const btnPagina = document.createElement('button');
-        btnPagina.innerText = i;
-        btnPagina.classList.add('pagination-button');
-        if (i === paginaAtual) {
-            btnPagina.classList.add('active');
-        }
-        btnPagina.addEventListener('click', () => {
-            displayPage(i);
+        // Botão Anterior
+        const btnAnterior = document.createElement('button');
+        btnAnterior.innerText = 'Anterior';
+        btnAnterior.classList.add('pagination-button');
+        if (paginaAtual === 1) btnAnterior.classList.add('disabled');
+        btnAnterior.addEventListener('click', () => {
+            if (paginaAtual > 1) displayPage(paginaAtual - 1);
         });
-        paginationContainer.appendChild(btnPagina);
+        paginationContainer.appendChild(btnAnterior);
+
+        // Páginas numeradas
+        for (let i = 1; i <= totalPaginas; i++) {
+            const btnPagina = document.createElement('button');
+            btnPagina.innerText = i;
+            btnPagina.classList.add('pagination-button');
+            if (i === paginaAtual) btnPagina.classList.add('active');
+            btnPagina.addEventListener('click', () => displayPage(i));
+            paginationContainer.appendChild(btnPagina);
+        }
+
+        // Botão Próximo
+        const btnProximo = document.createElement('button');
+        btnProximo.innerText = 'Próximo';
+        btnProximo.classList.add('pagination-button');
+        if (paginaAtual === totalPaginas) btnProximo.classList.add('disabled');
+        btnProximo.addEventListener('click', () => {
+            if (paginaAtual < totalPaginas) displayPage(paginaAtual + 1);
+        });
+        paginationContainer.appendChild(btnProximo);
     }
 
-    // Botão "Próximo"
-    const btnProximo = document.createElement('button');
-    btnProximo.innerText = 'Próximo';
-    btnProximo.classList.add('pagination-button');
-    if (paginaAtual === totalPaginas) btnProximo.classList.add('disabled');
-    btnProximo.addEventListener('click', () => {
-        if (paginaAtual < totalPaginas) {
-            displayPage(paginaAtual + 1);
-        }
-    });
-    paginationContainer.appendChild(btnProximo);
-}
-
-// 4. Chamada inicial para mostrar a primeira página quando o site carrega
-displayPage(1);
-    
-    // 1. INICIALIZAÇÃO DO MAPA
-    const map = L.map('map').setView([-7.059800, -35.317108], 14);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-
-    // 2. DADOS DOS PONTOS CULTURAIS
-    const culturalSpots = [
-        {
-            name: 'Casa da Cultura de Mari',
-            lat: -7.059875,
-            lng: -35.317466,
-            category: 'museu',
-            description: 'Espaço dedicado à cultura local e exposições artísticas.'
-        },
-    ];
-
-    // Armazena os marcadores em um objeto para fácil acesso
-    const markers = {};
-    const markerLayer = L.layerGroup().addTo(map); // Camada para adicionar/remover marcadores
-
-    // Função para criar e exibir os marcadores
-    function displayMarkers(category) {
-        // Limpa os marcadores existentes
-        markerLayer.clearLayers();
-
-        // Filtra os locais com base na categoria
-        const filteredSpots = (category === 'todos')
-            ? culturalSpots // Se for 'todos', usa a lista completa
-            : culturalSpots.filter(spot => spot.category === category); // Senão, filtra
-
-        // Adiciona os marcadores filtrados ao mapa
-        filteredSpots.forEach(spot => {
-            const marker = L.marker([spot.lat, spot.lng]);
-            marker.bindPopup(`<b>${spot.name}</b><br>${spot.description}`);
-            markerLayer.addLayer(marker);
+    // Carrega dados da planilha ou do local fallback
+    buscarDados(URL_PLANILHA_AGENTES, 'data/agentes.json')
+        .then(data => {
+            agentes = data;
+            displayPage(1);
+        })
+        .catch(err => {
+            console.error('Erro ao carregar agentes:', err);
+            gridContainer.innerHTML = '<p class="text-center w-100 text-danger">Erro ao carregar a lista de agentes.</p>';
         });
-    }
+}
 
-    // Seleciona todos os botões de filtro
-    const filterButtons = document.querySelectorAll('.filter-btn');
+/**
+ * 4. PREVIEW DE AGENTES (HOMEPAGE)
+ * Exibe as fotos dos agentes cadastrados na homepage de forma dinâmica.
+ */
+function initAgentesPreview() {
+    const previewContainer = document.querySelector('.agentes-fotos-preview');
+    if (!previewContainer) return;
 
-    // Adiciona um "ouvinte" de clique a cada botão
-    filterButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // Remove a classe 'active' de todos os botões
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            // Adiciona a classe 'active' ao botão clicado
-            button.classList.add('active');
+    buscarDados(URL_PLANILHA_AGENTES, 'data/agentes.json')
+        .then(data => {
+            previewContainer.innerHTML = '';
+            // Mostra no máximo as fotos dos 5 primeiros agentes cadastrados
+            const maxPreview = data.slice(0, 5);
+            maxPreview.forEach(agente => {
+                if (agente.foto && agente.foto.trim() !== '') {
+                    const img = document.createElement('img');
+                    img.src = agente.foto;
+                    img.alt = `Foto de ${agente.nome}`;
+                    img.loading = 'lazy';
+                    previewContainer.appendChild(img);
+                }
+            });
+        })
+        .catch(err => console.error('Erro no preview de agentes:', err));
+}
 
-            // Pega a categoria do botão (do atributo 'data-category')
-            const category = button.dataset.category;
+/**
+ * 5. LISTAGEM DE OPORTUNIDADES E EDITAIS
+ * Carrega editais da planilha (ou oportunidades.json local) e os exibe.
+ */
+function initOportunidades() {
+    const listContainer = document.querySelector('.editais-list');
+    if (!listContainer) return;
 
-            // Chama a função para exibir os marcadores da categoria selecionada
-            displayMarkers(category);
+    buscarDados(URL_PLANILHA_OPORTUNIDADES, 'data/oportunidades.json')
+        .then(data => {
+            listContainer.innerHTML = '';
+            if (data.length === 0) {
+                listContainer.innerHTML = '<p class="text-center w-100">Não há editais ou oportunidades disponíveis no momento.</p>';
+                return;
+            }
+
+            data.forEach(edital => {
+                const statusTexto = edital.status === 'aberto' ? 'Inscrições Abertas' : 'Encerrado';
+                const statusClasse = edital.status === 'aberto' ? 'status-aberto' : 'status-encerrado';
+                const botaoTexto = edital.status === 'aberto' ? 'Ler o Edital e Inscrever-se' : 'Ver Resultados';
+
+                const cardHTML = `
+                    <div class="edital-card">
+                        <span class="status-badge ${statusClasse}">${statusTexto}</span>
+                        <h3>${edital.titulo}</h3>
+                        <p>${edital.descricao}</p>
+                        <a href="${edital.link}" class="btn btn--primary" target="_blank">${botaoTexto}</a>
+                    </div>
+                `;
+                listContainer.insertAdjacentHTML('beforeend', cardHTML);
+            });
+        })
+        .catch(err => {
+            console.error('Erro ao renderizar oportunidades:', err);
+            listContainer.innerHTML = '<p class="text-center w-100 text-danger">Falha ao obter oportunidades da base de dados.</p>';
         });
-    });
-
-    // Exibe todos os marcadores inicialmente ao carregar a página
-    displayMarkers('todos');
-});
-// --- Lógica do Menu Hamburger ---
-
-// Seleciona os elementos do DOM
-const hamburgerButton = document.querySelector('.hamburger-button');
-const mobileNav = document.querySelector('.mobile-nav');
-const closeButton = document.querySelector('.close-button');
-
-// Função para abrir o menu
-function abrirMenu() {
-    mobileNav.classList.add('mobile-nav-open');
 }
 
-// Função para fechar o menu
-function fecharMenu() {
-    mobileNav.classList.remove('mobile-nav-open');
-}
+/**
+ * 6. PREVIEW DE OPORTUNIDADES (HOMEPAGE)
+ * Exibe as 3 oportunidades mais recentes em formato resumido.
+ */
+function initOportunidadesPreview() {
+    const listContainer = document.querySelector('.editais-preview-list');
+    if (!listContainer) return;
 
-// Adiciona eventos de clique aos botões
-if (hamburgerButton && mobileNav && closeButton) {
-    hamburgerButton.addEventListener('click', abrirMenu);
-    closeButton.addEventListener('click', fecharMenu);
+    buscarDados(URL_PLANILHA_OPORTUNIDADES, 'data/oportunidades.json')
+        .then(data => {
+            listContainer.innerHTML = '';
+            // Pega no máximo as 3 últimas oportunidades
+            const ultimosEditais = data.slice(0, 3);
 
-    // Opcional: Fecha o menu se clicar em um link dentro dele
-    mobileNav.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', fecharMenu);
-    });
+            if (ultimosEditais.length === 0) {
+                listContainer.innerHTML = '<p>Nenhuma oportunidade cadastrada no momento.</p>';
+                return;
+            }
+
+            ultimosEditais.forEach(edital => {
+                const statusTexto = edital.status === 'aberto' ? 'Aberto' : 'Encerrado';
+                const statusClasse = edital.status === 'aberto' ? 'status-aberto' : 'status-encerrado';
+
+                const itemHTML = `
+                    <div class="edital-preview-item">
+                        <span class="status-badge ${statusClasse}">${statusTexto}</span>
+                        <p>${edital.titulo}</p>
+                    </div>
+                `;
+                listContainer.insertAdjacentHTML('beforeend', itemHTML);
+            });
+        })
+        .catch(err => console.error('Erro no preview de oportunidades:', err));
 }

@@ -1,641 +1,827 @@
+/* --- Google Fonts Integration --- */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
 /* --- 1. Definição das Variáveis CSS --- */
 :root {
-  /* Cores */
-  --cor-principal: #FFC300; /* Amarelo */
-  --cor-principal-hover: #E6B000;
-  --cor-secundaria: #004A99; /* Azul */
-  --cor-secundaria-hover: #003B7A; /* Azul Escuro */
-  --cor-secundaria-clara: #E6F0FF; /* Azul bem clarinho para faixa */
-  --cor-fundo: #FFF9E6; /* Amarelo claro */
-  --cor-branco: #ffffff;
-  --cor-texto-padrao: #333;
-  --cor-texto-claro: #555;
-  --cor-titulo: #2c3e50;
-  --cor-cinza-claro: #f4f4f9;
-  --cor-cinza-medio: #f8f9fa;
-  --cor-cinza-borda: #ddd;
-  --cor-cinza-borda-card: #e0e0e0;
-  --cor-preto-contraste: #111;
-  --cor-status-aberto: #008000; /* Verde */
-  --cor-status-encerrado: #777; /* Cinza */
+  /* Cores Principais */
+  --cor-primaria: #FFC300;           /* Amarelo Vibrante */
+  --cor-primaria-hover: #E6B000;
+  --cor-secundaria: #004A99;         /* Azul Real */
+  --cor-secundaria-hover: #003B7A;   /* Azul Escuro */
+  --cor-secundaria-clara: #E6F0FF;   /* Azul Claro para fundos/faixas */
+  
+  /* Cores Auxiliares */
+  --cor-header: #198754;             /* Verde Escuro */
+  --cor-fundo: #FFF9E6;              /* Creme Suave */
+  --cor-branco: #FFFFFF;
+  --cor-preto: #1A1A1A;
+  
+  /* Cores de Texto */
+  --cor-texto-principal: #2D3748;   /* Cinza Escuro */
+  --cor-texto-secundario: #4A5568;  /* Cinza Médio */
+  --cor-texto-claro: #718096;       /* Cinza Claro */
+  
+  /* Status */
+  --cor-status-aberto: #10B981;      /* Verde Moderno */
+  --cor-status-encerrado: #8A9Aad;   /* Slate Grey */
 
   /* Bordas e Sombras */
-  --raio-borda-container: 8px;
-  --raio-borda-botao: 5px;
-  --raio-borda-filtro: 20px;
-  --sombra-container: 0 4px 15px rgba(0,0,0,0.1);
-  --sombra-container-hover: 0 8px 25px rgba(0,0,0,0.15);
-  --sombra-foto: 0 2px 5px rgba(0,0,0,0.2);
-
+  --raio-borda-lg: 16px;
+  --raio-borda-md: 10px;
+  --raio-borda-sm: 6px;
+  --raio-borda-pill: 50px;
+  
+  --sombra-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+  --sombra-md: 0 8px 20px rgba(0, 0, 0, 0.06);
+  --sombra-lg: 0 12px 30px rgba(0, 0, 0, 0.1);
+  --sombra-hover: 0 16px 36px rgba(0, 0, 0, 0.15);
+  
   /* Transições */
-  --transicao-padrao: 0.3s ease;
+  --transicao-suave: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transicao-rapida: all 0.15s ease-out;
 }
 
-/* --- Reset Básico e Fontes --- */
-body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    margin: 0;
-    background-color: var(--cor-fundo);
-    color: var(--cor-texto-padrao);
-    line-height: 1.6;
-
-    min-height: 100vh; /* Garante que o corpo tenha no mínimo a altura total da tela */
-    display: flex;     /* Ativa o modo flexível */
-    flex-direction: column;
-
-    overflow-x: hidden;
-    width: 100vw;
+/* --- Reset e Configurações Globais --- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-*, *::before, *::after {
-    box-sizing: border-box; /* <--- GARANTE QUE PADDING E BORDAS ESTEJAM INCLUSOS NA LARGURA */
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--cor-fundo);
+  color: var(--cor-texto-principal);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+main {
+  flex: 1;
 }
 
-/* --- Cabeçalho --- */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  color: var(--cor-texto-principal);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: var(--transicao-rapida);
+}
+
+/* --- Cabeçalho e Navegação --- */
 header {
-    background-color: var(--cor-status-aberto);
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--cor-cinza-borda);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  background-color: var(--cor-header);
+  box-shadow: var(--sombra-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0.8rem 0;
+  transition: var(--transicao-suave);
 }
 
 .header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .header-logo {
-    height: 125px; /* Ajuste conforme necessidade */
-    width: auto;
-    display: block;
-    margin: 0;
-    opacity: 0.9;
-    border-radius: 4px;
+  height: 90px;
+  width: auto;
+  display: block;
+  border-radius: var(--raio-borda-sm);
+  transition: var(--transicao-suave);
 }
 
-header h1 { margin: 0; }
+.header-logo:hover {
+  transform: scale(1.03);
+}
 
 /* Menu Principal (Desktop) */
-.main-nav {
-    margin-right: 25%; /* Afasta da borda direita */
-}
 .main-nav ul {
-    margin: 0; 
-    padding: 0; 
-    list-style: none; 
-    display: flex;
+  display: flex;
+  list-style: none;
+  gap: 25px;
+  align-items: center;
 }
-.main-nav li { 
-    margin-left: 25px; 
-}
+
 .main-nav a {
-    text-decoration: none; 
-    color: var(--cor-branco); 
-    font-weight: 500;
-    transition: color var(--transicao-padrao);
-}
-.main-nav a:hover { 
-    color: var(--cor-principal); 
+  color: var(--cor-branco);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 8px 12px;
+  position: relative;
 }
 
-/* --- Menu Hamburger (Mobile) --- */
+.main-nav a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 3px;
+  bottom: 0;
+  left: 12px;
+  background-color: var(--cor-primaria);
+  transition: var(--transicao-suave);
+  border-radius: 2px;
+}
+
+.main-nav a:hover {
+  color: var(--cor-primaria);
+}
+
+.main-nav a:hover::after {
+  width: calc(100% - 24px);
+}
+
+/* Hamburger & Mobile Nav */
 .hamburger-button {
-    display: none; 
-    background: none; 
-    border: none; 
-    font-size: 1.8rem;
-    color: var(--cor-secundaria); 
-    cursor: pointer;
+  display: none;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--cor-branco);
+  cursor: pointer;
+  padding: 8px;
+  transition: var(--transicao-rapida);
 }
-.close-button {
-    display: none; 
-    position: absolute; 
-    top: 20px; 
-    right: 20px; 
-    background: none;
-    border: none; 
-    font-size: 2rem; 
-    color: var(--cor-branco); 
-    cursor: pointer;
+
+.hamburger-button:hover {
+  color: var(--cor-primaria);
 }
+
 .mobile-nav {
-    display: none; 
-    position: fixed; 
-    top: 0; 
-    right: 0; 
-    width: 80%; 
-    max-width: 300px;
-    height: 100%; 
-    background-color: var(--cor-secundaria-hover); 
-    box-shadow: -5px 0 15px rgba(0,0,0,0.2);
-    padding: 60px 20px 20px 20px; 
-    box-sizing: border-box; 
-    transform: translateX(100%);
-    transition: transform var(--transicao-padrao); 
-    z-index: 1000;
-}
-.mobile-nav ul { 
-    list-style: none; 
-    padding: 0; 
-    margin: 0; 
-    display: flex; 
-    flex-direction: column; 
-}
-.mobile-nav li { 
-    margin-bottom: 20px; 
-}
-.mobile-nav a { 
-    color: var(--cor-branco); 
-    text-decoration: none; 
-    font-size: 1.2rem; 
-    font-weight: bold; 
-}
-.mobile-nav-open { 
-    transform: translateX(0); 
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 80%;
+  max-width: 320px;
+  height: 100vh;
+  background-color: var(--cor-secundaria-hover);
+  box-shadow: var(--sombra-lg);
+  padding: 80px 30px 40px 30px;
+  transform: translateX(100%);
+  transition: var(--transicao-suave);
+  z-index: 999;
 }
 
-@media (max-width: 768px) {
-    .main-nav { 
-        display: none; 
-    }
-    .hamburger-button { 
-        display: block; 
-    }
-    .mobile-nav { 
-        display: block; 
-    }
-    .mobile-nav-open .close-button { 
-        display: block; 
-    }
+.mobile-nav-open {
+  transform: translateX(0);
 }
 
-/* --- Conteúdo Principal --- */
-main { 
-    padding: 0 0 40px 0; 
-    flex: 1;
+.mobile-nav .close-button {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  background: transparent;
+  border: none;
+  font-size: 1.8rem;
+  color: var(--cor-branco);
+  cursor: pointer;
+  transition: var(--transicao-rapida);
 }
 
-h2 {
-    text-align: center;
-    margin-bottom: 40px;
-    color: var(--cor-titulo);
-    font-size: 2.2rem;
+.mobile-nav .close-button:hover {
+  color: var(--cor-primaria);
 }
 
-/* --- Classe Base para Contêineres de Seção --- */
+.mobile-nav ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mobile-nav a {
+  color: var(--cor-branco);
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: block;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-nav a:hover {
+  color: var(--cor-primaria);
+  padding-left: 8px;
+}
+
+@media (max-width: 991px) {
+  .main-nav {
+    display: none;
+  }
+  .hamburger-button {
+    display: block;
+  }
+  .mobile-nav {
+    display: block;
+  }
+}
+
+/* --- Container e Seções --- */
 .content-box {
-    background: var(--cor-branco);
-    padding: 30px;
-    border-radius: var(--raio-borda-container);
-    box-shadow: var(--sombra-container);
-    margin-bottom: 50px; /* Margem padrão entre caixas no fundo claro */
+  background: var(--cor-branco);
+  padding: 40px;
+  border-radius: var(--raio-borda-lg);
+  box-shadow: var(--sombra-md);
+  margin-bottom: 40px;
+  transition: var(--transicao-suave);
+  border: 1px solid rgba(0, 0, 0, 0.02);
 }
 
-/* Ajustes específicos para padding maior */
-.agentes-culturais-container,
-.sobre-container,
-.oportunidades-container,
-.agentes-preview-container,
-.oportunidades-preview-container {
-    padding: 40px;
+.content-box:hover {
+  box-shadow: var(--sombra-lg);
 }
 
-/* --- Faixas de Fundo Coloridas --- */
+/* Faixas Coloridas */
 .color-band {
-    padding: 50px 0;
-    width: 100%;
-    box-sizing: border-box;
-    margin-bottom: 50px;
-}
-.bg-yellow-band { 
-    background-color: var(--cor-principal); 
-}
-.bg-light-blue-band { 
-    background-color: var(--cor-secundaria-clara); 
+  padding: 60px 0;
+  margin-bottom: 40px;
+  width: 100%;
 }
 
-/* Ajustes de Espaçamento DENTRO das faixas coloridas */
-.color-band .container > .content-box:last-child,
-.color-band .container > a:last-child .content-box {
-    margin-bottom: 0; /* Remove margem do último item */
-}
-.color-band .container > .content-box:not(:last-child),
-.color-band .container > a:not(:last-child) .content-box {
-    margin-bottom: 40px; /* Adiciona margem entre itens */
-}
-/* Garante margem para .content-box fora das faixas */
-main > .container > .content-box { 
-    margin-bottom: 50px; 
+.bg-yellow-band {
+  background-color: var(--cor-primaria);
+  background-image: linear-gradient(135deg, var(--cor-primaria) 0%, #F5B000 100%);
 }
 
+.bg-light-blue-band {
+  background-color: var(--cor-secundaria-clara);
+  background-image: linear-gradient(135deg, var(--cor-secundaria-clara) 0%, #D4E6FC 100%);
+}
 
-/* --- Mapa --- */
-#map {
-    height: 500px; 
-    width: 100%; 
-    border-radius: var(--raio-borda-container);
-    border: 1px solid var(--cor-cinza-borda);
+/* --- Títulos --- */
+h2 {
+  font-size: 2rem;
+  margin-bottom: 30px;
+  text-align: center;
+  position: relative;
+  padding-bottom: 12px;
+}
+
+h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background-color: var(--cor-secundaria);
+  border-radius: 2px;
+}
+
+.cadastro-agentes.content-box h2::after {
+  background-color: var(--cor-primaria);
 }
 
 /* --- Botões --- */
 .btn {
-    display: inline-block; 
-    padding: 12px 25px; 
-    border: 1px solid transparent;
-    border-radius: var(--raio-borda-botao); 
-    text-decoration: none; font-weight: bold;
-    text-align: center; 
-    cursor: pointer;
-    transition: background-color var(--transicao-padrao), color var(--transicao-padrao), border-color var(--transicao-padrao), transform var(--transicao-padrao);
-}
-.btn:hover { 
-    transform: translateY(-2px); 
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  padding: 12px 28px;
+  border-radius: var(--raio-borda-md);
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: var(--transicao-suave);
+  font-size: 0.95rem;
+  box-shadow: var(--sombra-sm);
 }
 
-.btn--primary { 
-    background-color: var(--cor-principal); 
-    color: var(--cor-preto-contraste); 
-    border-color: var(--cor-principal); 
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-md);
 }
-.btn--primary:hover { 
-    background-color: var(--cor-principal-hover); 
-    border-color: var(--cor-principal-hover);
+
+.btn:active {
+  transform: translateY(0);
 }
-.btn--secondary { 
-    background-color: var(--cor-secundaria); 
-    color: var(--cor-branco); 
-    border-color: var(--cor-secundaria); 
+
+.btn--primary {
+  background-color: var(--cor-primaria);
+  color: var(--cor-preto);
+  border-color: var(--cor-primaria);
 }
-.btn--secondary:hover { 
-    background-color: var(--cor-secundaria-hover); 
-    border-color: var(--cor-secundaria-hover);
+
+.btn--primary:hover {
+  background-color: var(--cor-primaria-hover);
+  border-color: var(--cor-primaria-hover);
 }
+
+.btn--secondary {
+  background-color: var(--cor-secundaria);
+  color: var(--cor-branco);
+  border-color: var(--cor-secundaria);
+}
+
+.btn--secondary:hover {
+  background-color: var(--cor-secundaria-hover);
+  border-color: var(--cor-secundaria-hover);
+}
+
 .btn--filter {
-    background: none; 
-    border: 1px solid var(--cor-cinza-borda); 
-    color: var(--cor-texto-claro);
-    padding: 10px 20px; 
-    border-radius: var(--raio-borda-filtro);
+  background-color: var(--cor-branco);
+  border: 1px solid var(--cor-texto-claro);
+  color: var(--cor-texto-secundario);
+  padding: 8px 20px;
+  font-size: 0.9rem;
+  border-radius: var(--raio-borda-pill);
 }
-.btn--filter:hover { 
-    background-color: var(--cor-principal); 
-    color: var(--cor-preto-contraste); 
-    border-color: var(--cor-principal); 
-    transform: none; 
+
+.btn--filter:hover {
+  background-color: var(--cor-primaria);
+  border-color: var(--cor-primaria);
+  color: var(--cor-preto);
 }
-.btn--filter.active { 
-    background-color: var(--cor-secundaria); 
-    color: var(--cor-branco); 
-    border-color: var(--cor-secundaria); 
+
+.btn--filter.active {
+  background-color: var(--cor-secundaria);
+  border-color: var(--cor-secundaria);
+  color: var(--cor-branco);
+  box-shadow: var(--sombra-sm);
 }
 
 /* --- Filtros --- */
-.filters { 
-    text-align: center; 
-    margin-bottom: 20px; 
-}
-.filters .btn--filter { 
-    margin: 0 5px; 
-}
-
-/* --- Destaques da Semana (Gráficos) --- */
-.card-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
-    gap: 30px; 
-}
-.card-grid iframe { 
-    width: 100%; 
-    max-width: 600px; 
-    height: 400px; 
-    border-radius: var(--raio-borda-container); 
-    margin: 0 auto; 
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 25px;
 }
 
-/* --- Agentes Culturais (Página e Preview) --- */
-.agentes-grid { 
-    display: grid; 
-    grid-template-columns: 1fr; 
-    gap: 20px; 
+/* --- Mapa --- */
+#map {
+  height: 500px;
+  width: 100%;
+  border-radius: var(--raio-borda-lg);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: var(--sombra-sm);
+  z-index: 1;
 }
+
+/* Estilo do Popup do Mapa */
+.leaflet-popup-content-wrapper {
+  border-radius: var(--raio-borda-md);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  box-shadow: var(--sombra-md);
+}
+
+.leaflet-popup-content b {
+  font-weight: 700;
+  color: var(--cor-secundaria);
+  font-size: 1rem;
+}
+
+/* --- Gráficos / Destaques da Semana --- */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.card-grid iframe {
+  width: 100%;
+  height: 400px;
+  border: none;
+  border-radius: var(--raio-borda-lg);
+  box-shadow: var(--sombra-sm);
+  background-color: var(--cor-branco);
+  transition: var(--transicao-suave);
+}
+
+.card-grid iframe:hover {
+  box-shadow: var(--sombra-md);
+}
+
+/* --- Agentes Culturais (Lista e Cards) --- */
+.agentes-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 25px;
+}
+
 .agente-card {
-    display: flex; 
-    align-items: center; 
-    padding: 20px; 
-    border: 1px solid var(--cor-cinza-borda-card);
-    border-radius: var(--raio-borda-container); 
-    background-color: var(--cor-cinza-medio);
-    transition: transform var(--transicao-padrao), box-shadow var(--transicao-padrao);
+  display: flex;
+  align-items: center;
+  padding: 30px;
+  border-radius: var(--raio-borda-lg);
+  background-color: #FAFAFC;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  transition: var(--transicao-suave);
 }
-.agente-card:hover { 
-    transform: translateY(-5px); 
-    box-shadow: var(--sombra-container-hover); 
+
+.agente-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sombra-lg);
+  background-color: var(--cor-branco);
+  border-color: rgba(0, 74, 153, 0.1);
 }
+
 .agente-foto img {
-    width: 100px; 
-    height: 100px; 
-    border-radius: 50%; 
-    object-fit: cover; 
-    margin-right: 25px;
-    border: 4px solid var(--cor-principal); 
-    flex-shrink: 0;
-}
-.agente-info h3 { 
-    margin: 0 0 8px 0; 
-    color: #34495e; 
-    font-size: 1.5rem; 
-}
-.agente-info p { 
-    margin: 0; 
-    color: var(--cor-texto-claro); 
-    font-size: 0.95rem; 
-    line-height: 1.5; 
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 30px;
+  border: 4px solid var(--cor-primaria);
+  box-shadow: var(--sombra-sm);
+  flex-shrink: 0;
+  transition: var(--transicao-suave);
 }
 
-/* Preview Agentes */
-.agentes-preview-link { 
-    text-decoration: none; 
-    color: inherit; 
-    display: block; 
+.agente-card:hover .agente-foto img {
+  transform: scale(1.05);
+  border-color: var(--cor-secundaria);
 }
-.agentes-preview-container { 
-    text-align: center; 
-    transition: transform var(--transicao-padrao), box-shadow var(--transicao-padrao); 
+
+.agente-info h3 {
+  margin-bottom: 10px;
+  font-size: 1.4rem;
+  color: var(--cor-secundaria);
 }
-.agentes-preview-link:hover .agentes-preview-container { 
-    transform: translateY(-5px); 
-    box-shadow: var(--sombra-container-hover); 
+
+.agente-info p {
+  color: var(--cor-texto-secundario);
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
-.agentes-fotos-preview { 
-    display: flex; 
-    justify-content: center; 
-    margin: 25px 0; 
+
+/* Preview Agentes na Homepage */
+.agentes-preview-link {
+  display: block;
+  height: 100%;
 }
-.agentes-fotos-preview img { 
-    width: 80px; 
-    height: 80px; 
-    border-radius: 50%; 
-    object-fit: cover;
-    border: 4px solid var(--cor-branco); 
-    box-shadow: var(--sombra-foto); 
-    transition: transform var(--transicao-padrao); 
+
+.agentes-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  justify-content: space-between;
 }
+
+.agentes-fotos-preview {
+  display: flex;
+  justify-content: center;
+  margin: 25px 0;
+  position: relative;
+}
+
+.agentes-fotos-preview img {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--cor-branco);
+  box-shadow: var(--sombra-md);
+  transition: var(--transicao-suave);
+}
+
 .agentes-fotos-preview img:not(:first-child) {
-    margin-left: -20px; 
-    }
-.agentes-preview-link:hover .agentes-fotos-preview img { 
-    transform: translateY(-10px); 
-}
-.agentes-preview-container p { 
-    max-width: 600px; 
-    margin: 0 auto 20px auto; 
-}
-/* O span .preview-cta-button foi removido do CSS, usar .btn .btn--secondary no link <a> */
-
-/* --- Seção de Cadastro (Botão p/ Forms) --- */
-.cadastro-agentes {
-    text-align: center; /* Mantém conteúdo centralizado, agora que é .content-box */
-    background-color: var(--cor-secundaria);
-    color: var(--cor-branco);
-}
-/* Os estilos específicos de fundo/cor foram removidos pois agora usa .content-box */
-.cadastro-agentes.content-box h2 {
-    color: var(--cor-branco);
-}
-/* --- Página Sobre --- */
-.sobre-container { 
-    text-align: left; 
-}
-.sobre-container h3 { 
-    color: var(--cor-secundaria); 
-    margin-top: 30px; 
-    border-bottom: 2px solid var(--cor-principal); 
-    padding-bottom: 5px; 
-    display: inline-block; 
-}
-.sobre-container ul { 
-    list-style: none; 
-    padding-left: 0; 
-}
-.sobre-container li { 
-    padding-left: 25px; 
-    position: relative; 
-    margin-bottom: 10px; 
-}
-.sobre-container li::before { 
-    content: '✔'; 
-    color: var(--cor-secundaria); 
-    position: absolute; left: 0; 
-    font-weight: bold; 
+  margin-left: -25px;
 }
 
-/* --- Página Oportunidades (e Preview) --- */
-.oportunidades-container p { 
-    text-align: center; 
-    max-width: 800px; 
-    margin: 0 auto 40px auto; 
-    font-size: 1.1rem; 
+.agentes-preview-link:hover .agentes-fotos-preview img {
+  transform: translateY(-8px) scale(1.05);
 }
-.editais-list { 
-    display: grid; 
-    grid-template-columns: 1fr; 
-    gap: 30px; 
-}
-.edital-card { 
-    border: 1px solid var(--cor-cinza-borda); 
-    border-radius: var(--raio-borda-container); 
-    padding: 25px; 
-    position: relative; 
-    background-color: var(--cor-cinza-medio); 
-    overflow: hidden; 
-}
-.edital-card h3 { 
-    color: var(--cor-secundaria); 
-    margin-top: 10px; 
-    margin-bottom: 10px; 
-}
-.edital-card p { 
-    text-align: left;
-    margin-bottom: 25px; 
-    font-size: 1rem; 
-}
-/* O link .edital-link usará .btn .btn--primary no HTML */
 
-/* Preview Oportunidades */
-.oportunidades-preview-link { 
-    text-decoration: none; 
-    color: inherit; 
-    display: block; 
+.agentes-preview-link:hover .agentes-fotos-preview img:nth-child(even) {
+  transform: translateY(-12px) scale(1.05);
 }
-.oportunidades-preview-container { 
-    text-align: center; 
-    transition: transform var(--transicao-padrao), box-shadow var(--transicao-padrao); 
+
+/* --- Editais e Oportunidades --- */
+.oportunidades-container > p {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 40px auto;
+  font-size: 1.1rem;
+  color: var(--cor-texto-secundario);
 }
-.oportunidades-preview-link:hover .oportunidades-preview-container { 
-    transform: translateY(-5px); 
-    box-shadow: var(--sombra-container-hover); 
+
+.editais-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 25px;
 }
-.oportunidades-preview-container h2 { 
-    margin-bottom: 25px; 
+
+.edital-card {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: var(--raio-borda-lg);
+  padding: 30px;
+  position: relative;
+  background-color: #FAFAFC;
+  transition: var(--transicao-suave);
+  overflow: hidden;
 }
-.editais-preview-list { 
-    margin-bottom: 30px; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    gap: 15px; 
+
+.edital-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sombra-lg);
+  background-color: var(--cor-branco);
+  border-color: rgba(0, 74, 153, 0.08);
 }
-.edital-preview-item { 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    width: 100%; 
-    max-width: 500px; 
-    padding: 10px; 
-    border: 1px dashed var(--cor-cinza-borda); 
-    border-radius: var(--raio-borda-botao); 
+
+.edital-card h3 {
+  color: var(--cor-secundaria);
+  margin-top: 15px;
+  margin-bottom: 12px;
+  font-size: 1.3rem;
+  max-width: 80%;
 }
-.edital-preview-item p { 
-    margin: 0; 
-    font-weight: 500; 
-    color: var(--cor-texto-padrao); 
-    text-align: left; 
-}
-.edital-preview-item .status-badge { 
-    margin-right: 15px; flex-shrink: 0; 
+
+.edital-card p {
+  color: var(--cor-texto-secundario);
+  margin-bottom: 25px;
+  font-size: 0.95rem;
 }
 
 /* Selos de Status */
-.status-badge { 
-    padding: 5px 10px; 
-    color: var(--cor-branco); 
-    font-size: 0.8rem; 
-    font-weight: bold; 
-    text-transform: uppercase; 
-    border-radius: var(--raio-borda-botao); 
+.status-badge {
+  padding: 6px 14px;
+  color: var(--cor-branco);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  border-radius: var(--raio-borda-sm);
+  display: inline-block;
+  letter-spacing: 0.5px;
 }
-.edital-card .status-badge { 
-    position: absolute; 
-    top: 0; 
-    right: 0; 
-    border-top-right-radius: 7px; 
-    border-bottom-left-radius: 10px; 
+
+.edital-card .status-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: var(--raio-borda-lg);
 }
-.status-aberto { 
-    background-color: var(--cor-status-aberto); 
+
+.status-aberto {
+  background-color: var(--cor-status-aberto);
 }
-.status-encerrado { 
-    background-color: var(--cor-status-encerrado); 
+
+.status-encerrado {
+  background-color: var(--cor-status-encerrado);
+}
+
+/* Preview Oportunidades na Homepage */
+.oportunidades-preview-link {
+  display: block;
+  height: 100%;
+}
+
+.oportunidades-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.editais-preview-list {
+  margin: 25px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  max-width: 500px;
+}
+
+.edital-preview-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  border: 1px dashed var(--cor-texto-claro);
+  border-radius: var(--raio-borda-md);
+  background-color: rgba(255, 255, 255, 0.5);
+  transition: var(--transicao-suave);
+}
+
+.oportunidades-preview-link:hover .edital-preview-item {
+  border-style: solid;
+  border-color: var(--cor-secundaria);
+  background-color: var(--cor-branco);
+  transform: scale(1.02);
+}
+
+.edital-preview-item p {
+  margin: 0;
+  font-weight: 600;
+  color: var(--cor-texto-principal);
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+.edital-preview-item .status-badge {
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+/* --- Cadastro de Agentes --- */
+.cadastro-agentes {
+  text-align: center;
+  background-color: var(--cor-secundaria);
+  background-image: linear-gradient(135deg, var(--cor-secundaria) 0%, var(--cor-secundaria-hover) 100%);
+  color: var(--cor-branco);
+  padding: 50px 40px;
+}
+
+.cadastro-agentes.content-box h2 {
+  color: var(--cor-branco);
+}
+
+.cadastro-agentes p {
+  margin-bottom: 30px;
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0.9;
+}
+
+/* --- Página Sobre --- */
+.sobre-container {
+  text-align: left;
+}
+
+.sobre-container h3 {
+  color: var(--cor-secundaria);
+  margin-top: 35px;
+  margin-bottom: 15px;
+  border-bottom: 3px solid var(--cor-primaria);
+  padding-bottom: 6px;
+  display: inline-block;
+}
+
+.sobre-container ul {
+  list-style: none;
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sobre-container li {
+  padding-left: 30px;
+  position: relative;
+  font-size: 1rem;
+}
+
+.sobre-container li::before {
+  content: '✓';
+  color: var(--cor-status-aberto);
+  position: absolute;
+  left: 0;
+  font-weight: 900;
+  font-size: 1.1rem;
 }
 
 /* --- Paginação --- */
-.pagination-container { 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    margin-top: 40px; 
-    user-select: none; 
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 40px;
 }
-/* Os botões de paginação usarão .btn no HTML */
-.pagination-button.active { 
-    background-color: var(--cor-principal); 
-    color: var(--cor-preto-contraste); 
-    border-color: var(--cor-principal); 
+
+.pagination-button {
+  background-color: var(--cor-branco);
+  border: 1px solid var(--cor-cinza-borda);
+  color: var(--cor-texto-secundario);
+  padding: 10px 18px;
+  font-weight: 600;
+  border-radius: var(--raio-borda-md);
+  cursor: pointer;
+  transition: var(--transicao-suave);
 }
-.pagination-button.disabled { 
-    cursor: not-allowed; opacity: 0.5;
+
+.pagination-button:hover:not(.disabled) {
+  background-color: var(--cor-primaria);
+  border-color: var(--cor-primaria);
+  color: var(--cor-preto);
+}
+
+.pagination-button.active {
+  background-color: var(--cor-secundaria);
+  border-color: var(--cor-secundaria);
+  color: var(--cor-branco);
+}
+
+.pagination-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: rgba(0, 0, 0, 0.02);
 }
 
 /* --- Rodapé --- */
-footer { 
-    background-color: var(--cor-secundaria); 
-    color: var(--cor-branco); 
-    padding: 30px 0; 
-    margin-top: 40px; 
+footer {
+  background-color: var(--cor-secundaria);
+  background-image: linear-gradient(135deg, var(--cor-secundaria) 0%, var(--cor-secundaria-hover) 100%);
+  color: var(--cor-branco);
+  padding: 40px 0;
+  margin-top: 60px;
+  border-top: 4px solid var(--cor-primaria);
 }
+
 .footer-layout {
-    display: flex;
-    justify-content: space-between; /* Empurra um para a esquerda e outro para a direita */
-    align-items: center; /* Alinha verticalmente no centro */
-    text-align: left; /* Remove o alinhamento centralizado padrão */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 30px;
 }
-.footer-left .footer-prefeitura-logo {
-    height: 60px; /* Ajuste o tamanho conforme preferir */
-    width: auto;
-    display: block;
-    margin: 0; /* Remove a margem automática que centralizava antes */
-    opacity: 0.9;
-    border-radius: 4px; /* Opcional: deixa os cantos do logo levemente arredondados */
+
+.footer-prefeitura-logo {
+  height: 70px;
+  width: auto;
+  display: block;
+  border-radius: var(--raio-borda-sm);
+  transition: var(--transicao-suave);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px;
 }
+
+.footer-prefeitura-logo:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .footer-right {
-    text-align: right; /* Alinha o texto e ícones à direita */
+  text-align: right;
 }
+
+.social-icons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.social-icons a {
+  color: var(--cor-branco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  transition: var(--transicao-suave);
+}
+
+.social-icons a:hover {
+  background-color: var(--cor-primaria);
+  color: var(--cor-preto);
+  transform: translateY(-3px);
+}
+
+.social-icons a i {
+  font-size: 1.3rem;
+}
+
 .footer-right p {
-    margin: 10px 0 0 0; /* Espaço entre ícones e texto */
-    font-size: 0.9rem;
-}
-.social-icons { 
-    margin-bottom: 0; 
-}
-.social-icons a { 
-    color: var(--cor-branco); 
-    margin-left: 20px; 
-    text-decoration: none; 
-}
-.social-icons a i { 
-    font-size: 2rem; 
-    transition: transform var(--transicao-padrao); 
-}
-.social-icons a:hover i { 
-    transform: scale(1.2); 
-}
-.footer-prefeitura-logo { 
-    height: 50px; 
-    width: auto; 
-    margin: 20px auto 10px auto; 
-    display: block; 
-    opacity: 0.9; 
+  font-size: 0.85rem;
+  opacity: 0.8;
 }
 
-/* --- Ajustes Responsivos --- */
-@media (max-width: 600px) {
-    .agente-card { 
-        flex-direction: column; 
-        align-items: center; 
-        text-align: center; 
-    }
-    .agente-foto img { 
-        margin-right: 0; 
-        margin-bottom: 15px; 
-    }
-}
+/* --- Responsividade --- */
 @media (max-width: 768px) {
-    .footer-layout {
-        flex-direction: column; /* Empilha verticalmente */
-        text-align: center;
-        gap: 20px; /* Espaço entre o logo e o texto */
-    }
-
-    .footer-right {
-        text-align: center;
-    }
-
-    .footer-left .footer-prefeitura-logo {
-        margin: 0 auto; /* Centraliza o logo no celular */
-    }
-    
-    .social-icons a {
-        margin: 0 10px; /* Ajusta margem dos ícones no celular */
-    }
+  .footer-layout {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .footer-right {
+    text-align: center;
+  }
+  
+  .social-icons {
+    justify-content: center;
+  }
+  
+  .agente-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 25px;
+  }
+  
+  .agente-foto img {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
 }
